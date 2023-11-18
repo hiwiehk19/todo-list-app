@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Task from './Task';
-
+import add_task from './image/add_task.svg'
 interface TaskItem {
   id: number;
   name: string;
@@ -16,6 +16,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks');
+    console.log('Stored tasks:', storedTasks);
     if (storedTasks) {
       setTasks(JSON.parse(storedTasks));
     }
@@ -51,7 +52,12 @@ const App: React.FC = () => {
   };
 
   const categories = ['All', 'Personal', 'Work', 'Shopping', 'Others']; 
+  const filteredTasks = tasks.filter(
+    task => selectedTab === 'All' ? true : task.category === selectedTab
+  );
 
+  // Check if there are tasks for the selected category
+  const hasTasksForSelectedCategory = filteredTasks.length > 0;
   return (
     <div className="container mx-auto mt-8 px-4 ">
       <h1 className="text-3xl font-bold mb-4">To-Do List</h1>
@@ -83,12 +89,12 @@ const App: React.FC = () => {
           Add
         </button>
       </div>
-      <div className="flex flex-wrap mt-4">
+      <div className="flex flex-wrap mt-4 justify-center">
         {categories.map((category, index) => (
           <button
             key={index}
-            className={`px-4 py-2 rounded-md mr-4 mb-2 ${
-              selectedTab === category ? 'bg-blue-500 text-white' : 'bg-gray-300'
+            className={`px-4 py-2  mr-4 mb-2 ${
+              selectedTab === category ? ' border-b text-blue-500 border-blue-500' : ''
             }`}
             onClick={() => setSelectedTab(category)}
           >
@@ -96,12 +102,19 @@ const App: React.FC = () => {
           </button>
         ))}
       </div>
-      <ul className="divide-y divide-gray-300">
-        {tasks
-          .filter(task =>
-            selectedTab === 'All' ? true : task.category === selectedTab
-          )
-          .map((task) => (
+   
+       {!hasTasksForSelectedCategory && (
+        <div className="flex flex-col items-center justify-center my-8">
+          
+       <img src={add_task} alt="No Task Available"
+        style={{ width: '100px', height: '100px' }}/>
+      
+          <p className="text-gray-500">No tasks available for {selectedTab} category</p>
+        </div>
+      )}
+      {hasTasksForSelectedCategory && (
+        <ul className="divide-y divide-gray-300 ">
+          {filteredTasks.map((task) => (
             <Task
               key={task.id}
               task={task}
@@ -109,7 +122,8 @@ const App: React.FC = () => {
               toggleComplete={toggleComplete}
             />
           ))}
-      </ul>
+        </ul>
+      )}
     </div>
   );
 };

@@ -13,7 +13,8 @@ interface TaskProps {
 
 const Task: React.FC<TaskProps> = ({ task, deleteTask, toggleComplete }) => {
   return (
-    <div>
+    <div className='flex item-center justify-center'>
+    <div className='md:w-1/2 w-full'>
     <li className="py-2">
       <div className="flex items-center">
         <input
@@ -33,6 +34,7 @@ const Task: React.FC<TaskProps> = ({ task, deleteTask, toggleComplete }) => {
         </button>
       </div>
     </li>
+    </div>
     </div>
   );
 };
